@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+site/
+env/
+.cache/
+.vscode/
+target/
+EDA - Redução de dimensionalidade.ipynb
