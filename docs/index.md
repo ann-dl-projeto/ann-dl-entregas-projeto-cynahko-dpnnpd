@@ -19,7 +19,8 @@ Quem responde por este repositório. Os **exercícios são individuais**; a equi
 | Nome completo | E-mail | GitHub |
 |---------------|--------|--------|
 | Cynthia Naoko Yasutake | cynthiany@al.insper.edu.br | CYNahko |
-| Davi Peter Bastian Nehls | | |
+| Davi Peter Bastian Nehls | davipbn@al.insper.edu.br | dpnnpd |
+| Henrique Bromfman de Puppi e Silva | henriquebps@al.insper.edu.br | kikepuppi |
 
 !!! tip "Como usar este template"
 
@@ -45,7 +46,7 @@ Quem responde por este repositório. Os **exercícios são individuais**; a equi
 
 Um projeto, um dataset, três entregas:
 
-- [ ] [EDA](projects/eda/index.md)
+- [X] [EDA](projects/eda/index.md)
 - [ ] [Classificação](projects/classification/index.md) **ou** [Regressão](projects/regression/index.md)
 - [ ] [Generativo](projects/generative/index.md)
 
