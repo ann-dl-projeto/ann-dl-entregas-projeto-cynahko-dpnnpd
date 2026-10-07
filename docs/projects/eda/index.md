@@ -4,7 +4,7 @@ task: regression
 dataset: https://www.kaggle.com/datasets/nehalbirla/vehicle-dataset-from-cardekho
 team:
   - Cynthia Naoko Yasutake
-  - Davi Peter Bastian Nehls]
+  - Davi Peter Bastian Nehls
   - Henrique Bromfman de Puppi e Silva
 ai_use: "used for planning, code review and writing support"
 ---
@@ -451,7 +451,7 @@ com 2 componentes a PCA perde 43% da variância, e o t-SNE não projeta dados no
 ### C - Pipeline
 
 O pipeline é um `ColumnTransformer` com quatro ramos, importável de
-[`code/preprocessing.py`](https://github.com/ann-dl-projeto/ann-dl-entregas-projeto-cynahko-dpnnpd/blob/main/docs/projects/eda/code/preprocessing.py){:target='_blank'}:
+[`code/preprocessing.py`](https://github.com/ann-dl-projeto/ann-dl-entregas-projeto-cynahko-dpnnpd-kikepuppi/blob/main/docs/projects/eda/code/preprocessing.py){:target='_blank'}:
 
 ```text
                         ┌─ num  [year, mileage, seats]                     → Winsorizer → mediana → StandardScaler
