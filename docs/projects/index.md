@@ -28,8 +28,8 @@ corrige pode abrir uma página direto, sem passar por aqui.
 | # | Entrega | Página |
 |---|---------|--------|
 | 1 | EDA | [EDA](eda/index.md) |
-| 2 | Classificação ou Regressão | [Classificação](classification/index.md) · [Regressão](regression/index.md) |
-| 3 | Generativo | [Generativo](generative/index.md) |
+| 2 | Regressão | em breve |
+| 3 | Generativo | em breve |
 
 As datas e os pesos de cada entrega estão no [overview](https://insper.github.io/ann-dl/){:target='_blank'}
 da edição.
@@ -39,11 +39,6 @@ da edição.
     Um relatório bem escrito não salva uma equipe que não consegue explicar o que entregou.
     Escreva os relatórios de modo que dê para defendê-los meses depois, e confira no overview
     da edição como a prova entra na nota.
-
-!!! warning "Escolha uma: classificação ou regressão"
-
-    A segunda entrega é só uma das duas. O template traz as duas pastas para a escolha; depois
-    de decidir, apague a que não vai usar da pasta `docs/projects/` e da `nav` no `mkdocs.yml`.
 
 ## Dataset
 

@@ -29,8 +29,6 @@ Quem responde por este repositório. Os **exercícios são individuais**; a equi
     último commit que toca a pasta daquela entrega* — não a hora do formulário nem a da
     publicação no Pages.
 
-    Comece por [Como usar este template](template/index.md).
-
 ## Status das entregas
 
 !!! info "Datas, pesos e regras são da sua edição"
@@ -47,8 +45,8 @@ Quem responde por este repositório. Os **exercícios são individuais**; a equi
 Um projeto, um dataset, três entregas:
 
 - [X] [EDA](projects/eda/index.md)
-- [ ] [Classificação](projects/classification/index.md) **ou** [Regressão](projects/regression/index.md)
-- [ ] [Generativo](projects/generative/index.md)
+- [ ] Regressão
+- [ ] Generativo
 
 ## Checklist antes de cada entrega
 

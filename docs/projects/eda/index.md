@@ -96,7 +96,7 @@ Encontramos estes valores impossíveis ou inconsistentes:
 
 - `max_power = "0"` ou `" bhp"` (7 linhas) e `mileage = 0` (17 linhas). Viraram `NaN`.
 - Em `km_driven`, um carro com 1 km e outro com 2.360.457 km (o segundo maior tem 1,5 milhão).
-- Em `torque`, um Maruti de 1.527 cc e 58 bhp com 789 Nm, mais que o Volvo de 400 bhp. É erro de digitação.
+- Em `torque`, três anúncios de um Maruti de 1.527 cc e 58 bhp marcam 789 Nm, mais que o Volvo de 400 bhp. É erro de digitação.
 - `mileage` mistura kmpl (Diesel/Petrol) e km/kg (88 linhas de CNG/LPG). Os números não são
   comparáveis entre si, mas a unidade acompanha exatamente o combustível, e o one-hot de `fuel`
   absorve a diferença.
@@ -136,8 +136,7 @@ lados do split (tratadas acima) e estatísticas de pré-processamento calculadas
 O preço é muito assimétrico à direita. A média fica 29% acima da mediana, e 4,73% dos carros passam
 de Q3 + 1,5·IQR. Com MSE no preço bruto, esses ~5% de carros de luxo dominariam o gradiente. Por isso
 vamos modelar `y = log(selling_price)`. A assimetria cai de 5,57 para −0,16 e o erro passa a ser
-relativo: errar ₹50 mil num carro de ₹2 lakh pesa mais do que num de ₹50 lakh. Para comparação na
-próxima entrega, prever sempre a mediana dá um MAE de ₹278.084.
+relativo: errar ₹50 mil num carro de ₹2 lakh pesa mais do que num de ₹50 lakh.
 
 ### D - Treino e teste
 
@@ -149,6 +148,9 @@ próxima entrega, prever sempre a mediana dá um MAE de ₹278.084.
 Usamos `train_test_split(test_size=0.2, random_state=42)` estratificado pelos decis de log(preço).
 Regressão não tem classes, mas estratificar por faixa de preço garante que os carros de luxo, que são
 poucos, apareçam nos dois lados. As médias coincidem até a terceira casa decimal.
+
+Para comparação na próxima entrega, prever sempre a mediana do treino (₹400.000) dá um MAE de
+₹277.696 no teste. Qualquer modelo precisa ficar abaixo disso.
 
 O split não é temporal porque o anúncio não tem data (`year` é o ano de fabricação, não o da venda).
 Ele acontece depois da remoção de duplicatas e antes de qualquer estatística aprendida. Da seção 2
@@ -257,7 +259,7 @@ para mostrar o tamanho da diferença.
 
 ![Figura 7](figures/fig07-dispersao.png)
 
-*Figura 7. Os três pares mais redundantes (ou de sinal oposto), coloridos pelo log do preço (treino).*
+*Figura 7. Os dois pares mais redundantes e o par negativo mais forte, coloridos pelo log do preço (treino).*
 
 `engine`, `max_power` e `torque_nm` formam um bloco com correlações entre 0,73 e 0,85. Numa rede
 neural isso não impede o treino, já que não há inversão de matriz, mas as três colunas juntas carregam
@@ -407,16 +409,20 @@ Cada método foi rodado com três valores do parâmetro de vizinhança.
 
 *Tabela 3. Comparação das projeções (amostra de 3.000 carros do treino).*
 
-| Projeção | trust k = 5 (local) | trust k = 30 (global) | R² kNN do log(preço) | tempo |
-|----------|------:|------:|------:|------:|
-| PCA (2 comp.) | 0,907 | 0,899 | 0,832 | < 1 s |
-| t-SNE perplexidade 5 | 0,997 | 0,960 | 0,813 | ≈ 4 s |
-| t-SNE perplexidade 30 | 0,998 | 0,984 | 0,837 | ≈ 5 s |
-| t-SNE perplexidade 50 | 0,998 | 0,985 | 0,837 | ≈ 5 s |
-| UMAP n_neighbors 5 | 0,993 | 0,927 | 0,762 | ≈ 12 s |
-| UMAP n_neighbors 15 | 0,993 | 0,979 | 0,827 | ≈ 6 s |
-| UMAP n_neighbors 50 | 0,988 | 0,980 | 0,828 | ≈ 7 s |
-| *controle: t-SNE perp. 30 em colunas embaralhadas* | - | - | −0,068 | |
+| Projeção | trust k = 5 (local) | trust k = 30 (global) | R² kNN do log(preço) |
+|----------|------:|------:|------:|
+| PCA (2 comp.) | 0,907 | 0,899 | 0,832 |
+| t-SNE perplexidade 5 | 0,997 | 0,960 | 0,813 |
+| t-SNE perplexidade 30 | 0,998 | 0,984 | 0,837 |
+| t-SNE perplexidade 50 | 0,998 | 0,985 | 0,837 |
+| UMAP n_neighbors 5 | 0,993 | 0,927 | 0,762 |
+| UMAP n_neighbors 15 | 0,993 | 0,979 | 0,827 |
+| UMAP n_neighbors 50 | 0,988 | 0,980 | 0,828 |
+| *controle: t-SNE perp. 30 em colunas embaralhadas* | - | - | −0,068 |
+
+O UMAP não é bit a bit reprodutível entre máquinas: em outro computador, com as versões do
+`requirements.txt`, os valores mudaram até 0,011 (o R² com `n_neighbors=5` deu 0,751). As conclusões
+não mudam.
 
 #### O que os métodos não lineares mostram além da PCA
 
@@ -523,15 +529,15 @@ Riscos para a modelagem e o que faremos na entrega 2:
 | Vazamento de estatísticas | - | O pipeline inteiro fica dentro do `fit` de cada fold, nunca na base completa |
 | Colinearidade entre engine, power e torque | ρ até 0,85 (Fig. 6) | Não prejudica a MLP; usar weight decay e medir a importância por permutação do bloco inteiro |
 | Ausência informativa | carros sem ficha técnica são 7 anos mais velhos (1B) | O indicador já está no pipeline |
-| Falta de informação sobre o estado do carro (batidas, versão exata) | o kNN em 40 dimensões para em R² = 0,875 | Aceitar um teto de desempenho; comparar a MLP com a baseline da mediana (MAE ₹278.084) e com um modelo linear |
+| Falta de informação sobre o estado do carro (batidas, versão exata, cidade) | nenhuma coluna descreve conservação ou histórico (1A) | Parte do preço fica sem explicação. Comparar a MLP com três baselines: mediana do treino (MAE ₹277.696), modelo linear e kNN (R² = 0,875 no log, em CV no treino) |
 
-## 6. Qualidade dos dados
+### Tabela-resumo
 
 | # | Resumo dos resultados | Valor |
 |---|---------|-------|
 | 1 | Dataset, tarefa e alvo | CarDekho `Car details v3.csv`; regressão; `selling_price` (₹), modelado como `log(selling_price)` |
 | 2 | Instâncias x features (numéricas / categóricas) | Bruto: 8.128 × 12 features (+ alvo). Após a limpeza: 6.907 × 12, sendo 7 numéricas e 5 categóricas |
-| 3 | Coluna com mais faltantes e seu percentual | Bruto: `torque`, 222 (2,73%). Após a limpeza: `mileage`, 223 (3,23%, incluindo 17 zeros impossíveis) |
+| 3 | Coluna com mais faltantes e seu percentual | Bruto: `mileage`, 238 (2,93%: 221 vazios + 17 zeros impossíveis). Após a limpeza: `mileage`, 223 (3,23%, incluindo 17 zeros impossíveis) |
 | 4 | Colunas descartadas e o motivo | `name` (2.058 valores, quase um ID; dá origem a `brand`); `torque` em texto (substituída por `torque_nm`; rpm descartado). Também saem 1.221 linhas duplicadas |
 | 5 | Classe minoritária (%) - ou média e mediana do alvo | Média ₹517.446, mediana ₹400.000 (assimetria 5,57; em log: 12,86 / 12,90) |
 | 6 | Tamanho do treino e do teste | 5.525 / 1.382 (80/20, estratificado por decil de preço, seed 42) |
